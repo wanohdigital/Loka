@@ -88,8 +88,6 @@ function showHomeSection() {
 function showTransactionSection() {
     const products = JSON.parse(localStorage.getItem('products')) || [];
     
-    $('#transactionProduct').select2('destroy');
-
     $('#contentSection').html(`
         <div class="card card-custom mb-4">
             <div class="card-header">Transaksi Penjualan</div>
@@ -120,7 +118,22 @@ function showTransactionSection() {
 
     loadCart();
 
-    $('#transactionProduct').select2();
+    $('#transactionProduct').select2({
+        placeholder: "Pilih produk",
+        allowClear: true
+    });
+
+    reloadSelect2();
+}
+
+// Reload Select2 options saat data produk berubah
+function reloadSelect2() {
+    const products = JSON.parse(localStorage.getItem('products')) || [];
+    $('#transactionProduct').empty();
+    products.forEach(p => {
+        $('#transactionProduct').append(new Option(`${p.name} (${p.barcode})`, p.id));
+    });
+    $('#transactionProduct').trigger('change'); // Refresh Select2
 }
 
 // 3. Section Riwayat
