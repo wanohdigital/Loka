@@ -1,0 +1,22 @@
+{
+    "short_name": "WarungKu",
+    "name": "WarungKu Digital",
+    "icons": [
+      {
+        "src": "icon.png",
+        "type": "image/png",
+        "sizes": "192x192"
+      },
+      {
+        "src": "icon.png",
+        "type": "image/png",
+        "sizes": "512x512"
+      }
+    ],
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#e82b38",
+    "theme_color": "#e82b38",
+    "description": "Aplikasi digitalisasi warung untuk UMKM",
+    "prefer_related_applications": false
+  }

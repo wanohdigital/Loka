@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Loka | Warung Digital Sederhana</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="manifest" href="manifest.json">
+    <link rel="shortcut icon" type="image/x-icon" href="https://wanoh.digital/assets/img/favicon.ico?v=2">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="app.css">
+</head>
+<body>
+    <!-- Header -->
+    <nav class="header navbar navbar-dark">
+        <div class="header-container container">
+            <div class="header-logo">
+                <img src="logo.png" alt="Logo">
+                <h4 class="mb-0 justify-content-end align-self-center">Loka</h4>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Banner -->
+    <div class="container mt-4">
+        <img src="banner.png" class="hero-banner img-fluid w-100 rounded-3" alt="Hero Banner">
+    </div>
+
+    <!-- Content -->
+    <div class="container mt-4">
+        <div id="contentSection"></div>
+    </div>
+
+    <!-- Fixed Footer -->
+    <footer class="fixed-footer">
+        <div class="container">
+            <div class="d-flex justify-content-around">
+                <button class="nav-button" id="transaction-section" onclick="showSection('transaction', this)">
+                    <i class="fas fa-cash-register fa-lg"></i><br>Transaksi
+                </button>
+                <button class="nav-button" onclick="showSection('history', this)">
+                    <i class="fas fa-history fa-lg"></i><br>Riwayat
+                </button>
+                <button class="nav-button" onclick="showSection('stock', this)">
+                    <i class="fas fa-warehouse fa-lg"></i><br>Stok
+                </button>
+                <button class="nav-button" onclick="showSection('catalog', this)">
+                    <i class="fas fa-box fa-lg"></i><br>Produk
+                </button>
+                <button class="nav-button" onclick="showSection('home', this)">
+                    <i class="fas fa-question-circle fa-lg"></i><br>Tentang
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <div class="modal fade" id="backupModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Backup & Restore Data</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <button class="btn btn-success w-100 mb-3" onclick="backupData()">
+                        <i class="fas fa-download"></i> Backup Data
+                    </button>
+                    <input type="file" id="restoreFile" class="form-control mb-3" accept=".json">
+                    <button class="btn btn-primary w-100" onclick="restoreData()">
+                        <i class="fas fa-upload"></i> Restore Data
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tambahkan modal di bawah footer -->
+    <div class="modal fade" id="installModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Install Aplikasi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Install Loka untuk akses cepat!</p>
+                    <button class="btn btn-custom w-100" onclick="installPWA()">
+                        <i class="fas fa-download"></i> Install Sekarang
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Scan Produk -->
+    <div class="modal fade" id="scanProductModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- Tambahkan modal-lg -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Scan Barcode Produk</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0"> <!-- Hapus padding -->
+                    <div id="scanner-product" class="scanner-container">
+                        <div class="scanner-overlay">
+                            <div class="scanner-box"></div>
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <input type="text" id="barcode" class="form-control" placeholder="Barcode akan muncul disini" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Scan Keranjang -->
+    <div class="modal fade" id="scanCartModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah ke Keranjang via Barcode</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div id="scanner-cart" class="scanner-container">
+                        <div class="scanner-overlay">
+                            <div class="scanner-box"></div>
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <div id="productInfo" class="mt-3 d-none">
+                            <h6 id="productNameDisplay"></h6>
+                            <p>Harga: Rp<span id="productPriceDisplay"></span></p>
+                            <input type="number" id="cartQuantity" class="form-control" placeholder="Jumlah" min="1">
+                            <button class="btn btn-success w-100 mt-3" onclick="addToCartFromScan()">
+                                <i class="fas fa-plus"></i> Tambah ke Keranjang
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
+    <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(() => console.log('Service Worker Registered'));
+        }
+    </script>
+</body>
+</html>
