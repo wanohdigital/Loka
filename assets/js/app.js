@@ -139,8 +139,20 @@ function reloadSelect2() {
 // 3. Section Riwayat
 function showHistorySection() {
     const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+    const today = new Date().toISOString().split('T')[0];
+    
+    // Hitung total omset hari ini
+    const totalHariIni = transactions
+        .filter(t => new Date(t.id).toISOString().split('T')[0] === today)
+        .reduce((sum, t) => sum + t.total, 0);
     
     let html = `
+        <div class="card card-custom mb-4">
+            <div class="card-header">Total Omset Hari Ini</div>
+            <div class="card-body text-center">
+                <h3>${formatRupiah(totalHariIni)}</h3>
+            </div>
+        </div>
         <div class="card card-custom mb-4">
             <div class="card-header">Riwayat Transaksi</div>
             <div class="card-body">
@@ -157,7 +169,7 @@ function showHistorySection() {
                             ${transactions.map(t => `
                                 <tr>
                                     <td>#${t.id}</td>
-                                    <td>Rp${t.total}</td>
+                                    <td>Rp${formatRupiah(t.total)}</td>
                                     <td>
                                         <button class="btn btn-danger btn-sm" onclick="deleteTransaction(${t.id})">
                                             <i class="fas fa-trash"></i>
@@ -280,12 +292,26 @@ function saveProduct() {
     const price = $('#productPrice').val();
     const stock = $('#productStock').val();
     
-    if (!barcode || !name || !price || !stock) return alert('Lengkapi semua field!');
+    if (!barcode || !name || !price || !stock) {
+        return Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: 'Lengkapi semua data!',
+            confirmButtonText: 'OK'
+        });
+    }
     
     // Cek barcode duplikat saat tambah baru
     if (!selectedProductId) {
         const existingProduct = JSON.parse(localStorage.getItem('products')).find(p => p.barcode === barcode);
-        if (existingProduct) return alert('Barcode sudah terdaftar!');
+        if (existingProduct) {
+            return Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: 'Barcode sudah terdaftar!',
+                confirmButtonText: 'OK'
+            });
+        }
     }
 
     const product = { 
@@ -379,7 +405,14 @@ function addToCart() {
     const productId = $('#transactionProduct').val();
     const quantity = parseInt($('#transactionQuantity').val()) || 0;
     
-    if (!productId || quantity <= 0) return alert('Masukkan jumlah valid!');
+    if (!productId || quantity <= 0) {
+        return Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: 'Pastikan produk dan jumlah terisi!',
+            confirmButtonText: 'OK'
+        });
+    }
     
     const product = JSON.parse(localStorage.getItem('products')).find(p => p.id == productId);
     const existingItem = cart.find(item => item.id === product.id);
@@ -463,7 +496,14 @@ function deleteCartItem(index) {
 }
 
 function completeTransaction() {
-    if (cart.length === 0) return alert('Keranjang kosong!');
+    if (cart.length === 0) {
+        return Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: 'Keranjang kosong!',
+            confirmButtonText: 'OK'
+        });
+    }
     
     const transaction = {
         id: Date.now(),
@@ -485,7 +525,13 @@ function completeTransaction() {
     cart = [];
     localStorage.removeItem('cart');
     loadCart();
-    alert('Transaksi berhasil!');
+
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil!',
+        text: 'Transaki berhasil terekam!',
+        confirmButtonText: 'OK'
+    });
 }
 
 // Fungsi untuk cetak struk
@@ -570,14 +616,26 @@ function restoreData() {
     const fileInput = document.getElementById('restoreFile');
     const file = fileInput.files[0];
     
-    if (!file) return alert('Pilih file backup!');
+    if (!file) {
+        return Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: 'Pilih file backup!',
+            confirmButtonText: 'OK'
+        });
+    }
     
     const reader = new FileReader();
     reader.onload = function() {
         const data = JSON.parse(reader.result);
         localStorage.setItem('products', JSON.stringify(data.products));
         localStorage.setItem('transactions', JSON.stringify(data.transactions));
-        alert('Data berhasil di-restore!');
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: 'Data berhasil dikembalikan!',
+            confirmButtonText: 'OK'
+        });
         location.reload();
     };
     reader.readAsText(file);
@@ -618,7 +676,11 @@ function initProductScanner() {
             constraints: { 
                 facingMode: "environment",
                 width: { min: 640, ideal: 1920 },
-                height: { min: 480, ideal: 1080 }
+                height: { min: 480, ideal: 1080 },
+                aspectRatio: { // Paksa rasio 16:9
+                    min: 1.777,
+                    max: 1.778
+                }
             }
         },
         decoder: { 
@@ -662,6 +724,7 @@ function initProductScanner() {
         document.getElementById('barcode').value = barcode;
         $('#scanProductModal').modal('hide');
         Quagga.stop();
+        playBeep();
         $('#productName').focus(); // Auto-fokus ke nama produk
     });
 }
@@ -676,7 +739,11 @@ function initCartScanner() {
             constraints: { 
                 facingMode: "environment",
                 width: { min: 640, ideal: 1920 },
-                height: { min: 480, ideal: 1080 }
+                height: { min: 480, ideal: 1080 },
+                aspectRatio: { // Paksa rasio 16:9
+                    min: 1.777,
+                    max: 1.778
+                }
             }
         },
         decoder: { 
@@ -736,9 +803,20 @@ function initCartScanner() {
             loadCart();
             $('#scanCartModal').modal('hide');
             Quagga.stop();
-            app.dialog.alert(`${product.name} ditambahkan ke keranjang!`);
+            playBeep();
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: `${product.name} ditambahkan ke keranjang!`,
+                confirmButtonText: 'OK'
+            });
         } else {
-            app.dialog.alert('Produk tidak ditemukan!', 'Error');
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: 'Produk tidak ditemukan!',
+                confirmButtonText: 'OK'
+            });
             Quagga.stop();
         }
     });
@@ -749,7 +827,14 @@ function addToCartFromScan() {
     const quantity = parseInt($('#cartQuantity').val()) || 0;
     const product = window.currentScannedProduct;
     
-    if (!product || quantity <= 0) return alert('Masukkan jumlah valid!');
+    if (!product || quantity <= 0) {
+        return Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: 'Pastikan produk dan jumlah terisi!',
+            confirmButtonText: 'OK'
+        });
+    }
     
     const existingItem = cart.find(item => item.id === product.id);
     
@@ -784,3 +869,18 @@ $('#scanCartModal').on('hidden.bs.modal', () => {
     $('#productInfo').addClass('d-none');
     delete window.currentScannedProduct;
 });
+
+// Putar suara saat scan berhasil
+function playBeep() {
+    const beep = document.getElementById('beepSound');
+    beep.play().catch(error => console.log('Autoplay blocked:', error));
+}
+
+// Format Rupiah
+function formatRupiah(angka) {
+    return new Intl.NumberFormat('id-ID', { 
+        style: 'currency', 
+        currency: 'IDR',
+        minimumFractionDigits: 0 
+    }).format(angka);
+}

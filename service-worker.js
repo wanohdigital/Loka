@@ -1,9 +1,9 @@
-const CACHE_NAME = 'warungku-bootstrap-v2';
+const CACHE_NAME = 'warungku-bootstrap-v3';
 const urlsToCache = [
     '/',
     '/index.html',
-    '/app.js',
-    '/app.css',
+    '/assets/js/app.js',
+    '/assets/css/app.css',
     '/manifest.json',
     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js',
@@ -12,8 +12,10 @@ const urlsToCache = [
     'https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css',
     'https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js',
     'https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js',
-    '/logo.png',
-    '/banner.png'
+    'https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css',
+    'https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js',
+    '/assets/img/logo.png',
+    '/assets/img/banner.png'
 ];
 
 // Install: Cache all resources
