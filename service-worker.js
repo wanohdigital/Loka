@@ -1,4 +1,4 @@
-const CACHE_NAME = 'warungku-bootstrap-v3';
+const CACHE_NAME = 'warungku-bootstrap-v6';
 const urlsToCache = [
     '/',
     '/index.html',

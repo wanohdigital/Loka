@@ -674,26 +674,14 @@ function initProductScanner() {
             type: "LiveStream",
             target: document.getElementById('scanner-product'),
             constraints: { 
-                facingMode: "environment",
-                width: { min: 640, ideal: 1920 },
-                height: { min: 480, ideal: 1080 },
-                aspectRatio: { // Paksa rasio 16:9
-                    min: 1.777,
-                    max: 1.778
-                }
+                facingMode: "environment"
             }
         },
         decoder: { 
-            readers: ["ean_reader", "code_128_reader", "upc_reader"],
+            readers: ["ean_reader", "code_128_reader"],
             locator: {
-                halfSample: false,
-                patchSize: "large",
-                debug: {
-                    showCanvas: true,
-                    showPatches: true,
-                    showFoundPatches: true,
-                    drawBoundingBox: true // Aktifkan overlay Quagga
-                }
+                patchSize: "large", // Ukuran area scan
+                halfSample: true
             }
         }
     }, err => {
@@ -737,26 +725,14 @@ function initCartScanner() {
             type: "LiveStream",
             target: document.getElementById('scanner-cart'),
             constraints: { 
-                facingMode: "environment",
-                width: { min: 640, ideal: 1920 },
-                height: { min: 480, ideal: 1080 },
-                aspectRatio: { // Paksa rasio 16:9
-                    min: 1.777,
-                    max: 1.778
-                }
+                facingMode: "environment"
             }
         },
         decoder: { 
-            readers: ["ean_reader", "code_128_reader", "upc_reader"],
+            readers: ["ean_reader", "code_128_reader"],
             locator: {
-                halfSample: false,
-                patchSize: "large",
-                debug: {
-                    showCanvas: true,
-                    showPatches: true,
-                    showFoundPatches: true,
-                    drawBoundingBox: true // Aktifkan overlay Quagga
-                }
+                patchSize: "large", // Ukuran area scan
+                halfSample: true
             }
         }
     }, err => {
