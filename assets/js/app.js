@@ -79,6 +79,9 @@ function showHomeSection() {
                         </div>
                     </div>
                 </div>
+                <p class="mt-4 text-center">
+                    Untuk pertanyaan, masukkan, diskusi bisa melalui Whatsapp +62851-8323-1708 atau Email ke inbox@wanoh.digital.
+                </p>
             </div>
         </div>
     `);
