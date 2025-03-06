@@ -98,55 +98,30 @@ small {
 
 /* Container Scanner */
 .scanner-container {
-    width: 100%;
-    height: 400px; /* Tinggi sesuaikan dengan modal */
-    position: relative;
-    overflow: hidden;
-    background: #000;
-}
-
-/* Styling Video Quagga */
-.scanner-container video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    z-index: 0; /* Pastikan video di bawah overlay */
-}
-
-.scanner-container {
     position: relative;
     width: 100%;
     height: 400px;
-    background: #000;
+    overflow: hidden;
 }
 
-.scanner-overlay {
+.scanner-container video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Overlay Styling */
+canvas.drawingBuffer {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1; /* Pastikan overlay di atas video */
-}
-
-.scanner-box {
-    width: 80%;
-    height: 60%;
-    border: 2px solid #fff;
-    box-sizing: border-box;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .scanner-container {
-        height: 300px;
-    }
+    pointer-events: none; /* Pastikan overlay tidak mengganggu interaksi */
 }
 
 /* Responsive Design */

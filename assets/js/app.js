@@ -677,15 +677,18 @@ function initProductScanner() {
             type: "LiveStream",
             target: document.getElementById('scanner-product'),
             constraints: { 
-                facingMode: "environment"
+                facingMode: "environment",
+                width: { min: 640, ideal: 1920 },
+                height: { min: 480, ideal: 1080 }
             }
         },
-        decoder: { 
-            readers: ["ean_reader", "code_128_reader"],
-            locator: {
-                patchSize: "large", // Ukuran area scan
-                halfSample: true
-            }
+        decoder: {
+            readers: ["ean_reader", "code_128_reader"], // Jenis barcode yang dideteksi
+            locate: true // Aktifkan lokasi deteksi barcode
+        },
+        locator: {
+            patchSize: "medium", // Ukuran area deteksi
+            halfSample: true // Optimalkan performa
         }
     }, err => {
         if (err) return console.error(err);
@@ -712,6 +715,25 @@ function initProductScanner() {
 
     Quagga.onDetected(data => {
         const barcode = data.codeResult.code;
+        const drawingCtx = Quagga.canvas.ctx.overlay; // Canvas overlay
+        const drawingCanvas = Quagga.canvas.dom.overlay; // DOM canvas
+
+        // Bersihkan overlay sebelumnya
+        drawingCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+
+        // Gambar kotak biru di sekitar barcode
+        if (result && result.box) {
+            const box = result.box;
+            drawingCtx.strokeStyle = "blue"; // Warna kotak
+            drawingCtx.lineWidth = 2; // Ketebalan garis
+            drawingCtx.strokeRect(
+                box[0], // x
+                box[1], // y
+                box[2] - box[0], // width
+                box[3] - box[1] // height
+            );
+        }
+
         document.getElementById('barcode').value = barcode;
         $('#scanProductModal').modal('hide');
         Quagga.stop();
@@ -728,15 +750,18 @@ function initCartScanner() {
             type: "LiveStream",
             target: document.getElementById('scanner-cart'),
             constraints: { 
-                facingMode: "environment"
+                facingMode: "environment",
+                width: { min: 640, ideal: 1920 },
+                height: { min: 480, ideal: 1080 }
             }
         },
-        decoder: { 
-            readers: ["ean_reader", "code_128_reader"],
-            locator: {
-                patchSize: "large", // Ukuran area scan
-                halfSample: true
-            }
+        decoder: {
+            readers: ["ean_reader", "code_128_reader"], // Jenis barcode yang dideteksi
+            locate: true // Aktifkan lokasi deteksi barcode
+        },
+        locator: {
+            patchSize: "medium", // Ukuran area deteksi
+            halfSample: true // Optimalkan performa
         }
     }, err => {
         if (err) return console.error(err);
@@ -764,6 +789,24 @@ function initCartScanner() {
     Quagga.onDetected(data => {
         const barcode = data.codeResult.code;
         const product = JSON.parse(localStorage.getItem('products')).find(p => p.barcode === barcode);
+        const drawingCtx = Quagga.canvas.ctx.overlay; // Canvas overlay
+        const drawingCanvas = Quagga.canvas.dom.overlay; // DOM canvas
+
+        // Bersihkan overlay sebelumnya
+        drawingCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+
+        // Gambar kotak biru di sekitar barcode
+        if (result && result.box) {
+            const box = result.box;
+            drawingCtx.strokeStyle = "blue"; // Warna kotak
+            drawingCtx.lineWidth = 2; // Ketebalan garis
+            drawingCtx.strokeRect(
+                box[0], // x
+                box[1], // y
+                box[2] - box[0], // width
+                box[3] - box[1] // height
+            );
+        }
         
         if (product) {
             // Auto-add dengan quantity 1
