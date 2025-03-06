@@ -18,52 +18,55 @@ const urlsToCache = [
     '/assets/img/banner.png'
 ];
 
-// Install: Cache all resources
-self.addEventListener('install', event => {
+// Install Service Worker
+self.addEventListener('install', (event) => {
+    console.log('Service Worker: Installed');
     event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then(cache => cache.addAll(urlsToCache))
-            .then(() => self.skipWaiting())
+        caches.open(CACHE_NAME).then((cache) => {
+            console.log('Caching files...');
+            return cache.addAll(urlsToCache);
+        })
     );
 });
 
-// Activate: Clean up old caches
-self.addEventListener('activate', event => {
+// Activate Service Worker
+self.addEventListener('activate', (event) => {
+    console.log('Service Worker: Activated');
     event.waitUntil(
-        caches.keys().then(cacheNames => {
+        caches.keys().then((cacheNames) => {
             return Promise.all(
-                cacheNames.map(cache => {
-                    if (cache !== CACHE_NAME) return caches.delete(cache);
+                cacheNames.map((cache) => {
+                    if (cache !== CACHE_NAME) {
+                        console.log('Clearing old cache...');
+                        return caches.delete(cache);
+                    }
                 })
             );
         })
     );
 });
 
-// Fetch: Serve cached resources or fallback to network
-self.addEventListener('fetch', event => {
+// Fetch Event
+self.addEventListener('fetch', (event) => {
     event.respondWith(
-        caches.match(event.request)
-            .then(response => {
-                // Cache-first strategy
-                if (response) return response;
-
-                // Fallback to network
-                return fetch(event.request)
-                    .then(fetchResponse => {
-                        // Cache the fetched resource for future use
-                        return caches.open(CACHE_NAME)
-                            .then(cache => {
-                                cache.put(event.request, fetchResponse.clone());
-                                return fetchResponse;
-                            });
-                    })
-                    .catch(() => {
-                        // Offline fallback for navigation requests
-                        if (event.request.mode === 'navigate') {
-                            return caches.match('/index.html');
-                        }
-                    });
+        fetch(event.request)
+            .then((response) => {
+                // Jika ada internet, simpan respons ke cache
+                const responseClone = response.clone();
+                caches.open(CACHE_NAME).then((cache) => {
+                    cache.put(event.request, responseClone);
+                });
+                return response;
+            })
+            .catch(() => {
+                // Jika offline, gunakan cache
+                return caches.match(event.request).then((cachedResponse) => {
+                    if (cachedResponse) {
+                        return cachedResponse;
+                    }
+                    // Jika tidak ada di cache, kembalikan fallback
+                    return caches.match('/offline.html'); // Opsional: Halaman fallback
+                });
             })
     );
 });
