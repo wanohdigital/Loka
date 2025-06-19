@@ -1,161 +1,382 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>Loka | Warung Digital Sederhana</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="manifest" href="manifest.json">
-    <link rel="shortcut icon" type="image/x-icon" href="https://wanoh.digital/assets/img/favicon.ico?v=2">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#e82b38">
+    <title>Loka - Aplikasi Warung</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="stylesheet" href="assets/css/app.css">
 </head>
 <body>
     <!-- Header -->
-    <nav class="header navbar navbar-dark">
-        <div class="header-container container">
-            <div class="header-logo">
-                <img src="assets/img/logo.png" alt="Logo">
-                <h4 class="mb-0 justify-content-end align-self-center">Loka</h4>
-            </div>
-        </div>
-    </nav>
+    <header class="header">
+        <img src="assets/img/icon.png" alt="Loka Logo" class="logo">
+        <h1 class="title">Loka</h1>
+    </header>
 
-    <!-- Hero Banner -->
-    <div class="container mt-4">
-        <img src="assets/img/banner.png" class="hero-banner img-fluid w-100 rounded-3" alt="Hero Banner">
-    </div>
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
 
-    <!-- Content -->
-    <div class="container mt-4">
-        <div id="contentSection"></div>
-    </div>
-
-    <!-- Fixed Footer -->
-    <footer class="fixed-footer">
-        <div class="container">
-            <div class="d-flex justify-content-around">
-                <button class="nav-button" id="transaction-section" onclick="showSection('transaction', this)">
-                    <i class="fas fa-cash-register fa-lg"></i><br>Transaksi
-                </button>
-                <button class="nav-button" onclick="showSection('history', this)">
-                    <i class="fas fa-history fa-lg"></i><br>Riwayat
-                </button>
-                <button class="nav-button" onclick="showSection('stock', this)">
-                    <i class="fas fa-warehouse fa-lg"></i><br>Stok
-                </button>
-                <button class="nav-button" onclick="showSection('catalog', this)">
-                    <i class="fas fa-box fa-lg"></i><br>Produk
-                </button>
-                <button class="nav-button" onclick="showSection('home', this)">
-                    <i class="fas fa-question-circle fa-lg"></i><br>Tentang
-                </button>
-            </div>
-        </div>
-    </footer>
-
-    <div class="modal fade" id="backupModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Backup & Restore Data</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Transaksi Page -->
+        <div id="transaksi" class="page active">
+            <div class="card">
+                <div class="card-header">
+                    Input Produk
                 </div>
-                <div class="modal-body">
-                    <button class="btn btn-success w-100 mb-3" onclick="backupData()">
-                        <i class="fas fa-download"></i> Backup Data
-                    </button>
-                    <input type="file" id="restoreFile" class="form-control mb-3" accept=".json">
-                    <button class="btn btn-primary w-100" onclick="restoreData()">
-                        <i class="fas fa-upload"></i> Restore Data
+                <div class="card-content">
+                    <div class="scanner-container">
+                        <div id="barcode-scanner">
+                            <div class="scanner-overlay">
+                                <button id="start-scanner" class="btn ripple">
+                                    <i class="fas fa-barcode mr-1"></i> Scan Barcode
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-field">
+                        <label for="barcode">Kode Barcode</label>
+                        <input type="text" id="barcode" placeholder="Scan atau masukkan kode barcode">
+                    </div>
+                    <div class="input-field">
+                        <label for="quantity">Jumlah</label>
+                        <div class="quantity-selector">
+                            <button id="decrease-qty" class="ripple">-</button>
+                            <input type="number" id="quantity" value="1" min="1">
+                            <button id="increase-qty" class="ripple">+</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button id="add-product" class="btn ripple">
+                        <i class="fas fa-plus mr-1"></i> Tambah ke Keranjang
                     </button>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Modal Install -->
-    <div class="modal fade" id="installModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title">Install Loka</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            <div class="card">
+                <div class="card-header">
+                    Daftar Belanja
                 </div>
-                <div class="modal-body text-center">
-                    <img src="assets/img/icon.png" class="mb-3" style="height: 80px;">
-                    <p>Install Loka untuk pengalaman terbaik!</p>
-                    <button class="btn btn-danger w-100" onclick="installPWA()">
-                        <i class="fas fa-download"></i> Install Sekarang
+                <div class="card-content">
+                    <div id="cart-items">
+                        <div class="empty-state">
+                            <i class="fas fa-shopping-cart"></i>
+                            <p>Belum ada produk ditambahkan</p>
+                        </div>
+                    </div>
+                    <div class="transaction-total">
+                        Total: <span id="total-amount">Rp 0</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button id="finish-transaction-no-print" class="btn btn-success ripple">
+                        <i class="fas fa-check mr-1"></i> Selesai Transaksi
+                    </button>
+                    <button id="finish-transaction-print" class="btn ripple">
+                        <i class="fas fa-print mr-1"></i> Selesai & Cetak Struk
                     </button>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Modal Scan Produk -->
-    <div class="modal fade" id="scanProductModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- Tambahkan modal-lg -->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Scan Barcode Produk</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <!-- Riwayat Page -->
+        <div id="riwayat" class="page">
+            <div class="row">
+                <div class="col s12 m6">
+                    <div class="summary-box">
+                        <div class="summary-title">Total Omset Hari Ini</div>
+                        <div class="summary-value" id="today-sales">Rp 0</div>
+                    </div>
                 </div>
-                <div class="modal-body p-0"> <!-- Hapus padding -->
-                    <div id="scanner-product" class="scanner-container" style="position: relative; width: 100%; height: 400px; background: #000;"></div>
-                    <div class="p-3">
-                        <input type="text" id="barcode" class="form-control" placeholder="Barcode akan muncul disini" readonly>
+                <div class="col s12 m6">
+                    <div class="summary-box" style="background-color: var(--success);">
+                        <div class="summary-title">Pendapatan Bersih Hari Ini</div>
+                        <div class="summary-value" id="today-profit">Rp 0</div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Modal Scan Keranjang -->
-    <div class="modal fade" id="scanCartModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambah ke Keranjang via Barcode</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <div class="card">
+                <div class="card-header">
+                    Riwayat Transaksi
                 </div>
-                <div class="modal-body p-0">
-                    <div id="scanner-cart" class="scanner-container" style="position: relative; width: 100%; height: 400px; background: #000;"></div>
-                    <div class="p-3">
-                        <div id="productInfo" class="mt-3 d-none">
-                            <h6 id="productNameDisplay"></h6>
-                            <p>Harga: Rp<span id="productPriceDisplay"></span></p>
-                            <input type="number" id="cartQuantity" class="form-control" placeholder="Jumlah" min="1">
-                            <button class="btn btn-success w-100 mt-3" onclick="addToCartFromScan()">
-                                <i class="fas fa-plus"></i> Tambah ke Keranjang
-                            </button>
+                <div class="card-content">
+                    <div id="transaction-history">
+                        <div class="empty-state">
+                            <i class="fas fa-history"></i>
+                            <p>Belum ada riwayat transaksi</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Stok Page -->
+        <div id="stok" class="page">
+            <div class="card">
+                <div class="card-header">
+                    Cari Produk
+                </div>
+                <div class="card-content">
+                    <div class="search-box">
+                        <input type="text" id="stock-search" placeholder="Cari nama produk atau kode barcode">
+                        <button id="search-stock" class="btn ripple">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Daftar Stok Produk
+                </div>
+                <div class="card-content">
+                    <div id="stock-list">
+                        <div class="empty-state">
+                            <i class="fas fa-box"></i>
+                            <p>Belum ada produk tersedia</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Produk Page -->
+        <div id="produk" class="page">
+            <div class="card">
+                <div class="card-header">
+                    Tambah Produk Baru
+                </div>
+                <div class="card-content">
+                    <div class="scanner-container">
+                        <div id="product-barcode-scanner">
+                            <div class="scanner-overlay">
+                                <button id="start-product-scanner" class="btn ripple">
+                                    <i class="fas fa-barcode mr-1"></i> Scan Barcode
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-field">
+                        <label for="product-barcode">Kode Barcode</label>
+                        <input type="text" id="product-barcode" placeholder="Masukkan kode barcode">
+                    </div>
+                    <div class="input-field">
+                        <label for="product-name">Nama Produk</label>
+                        <input type="text" id="product-name" placeholder="Masukkan nama produk">
+                    </div>
+                    <div class="input-field">
+                        <label for="product-price">Harga Jual (Rp)</label>
+                        <input type="number" id="product-price" placeholder="Masukkan harga jual">
+                    </div>
+                    <div class="input-field">
+                        <label for="product-cost">Harga Modal (Rp)</label>
+                        <input type="number" id="product-cost" placeholder="Masukkan harga modal">
+                    </div>
+                    <div class="input-field">
+                        <label for="product-stock">Stok</label>
+                        <input type="number" id="product-stock" placeholder="Masukkan jumlah stok" value="0">
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button id="save-product" class="btn ripple">
+                        <i class="fas fa-save mr-1"></i> Simpan Produk
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Daftar Produk
+                </div>
+                <div class="card-content">
+                    <div class="search-box">
+                        <input type="text" id="product-search" placeholder="Cari produk">
+                        <button id="search-product" class="btn ripple">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div id="product-list">
+                        <div class="empty-state">
+                            <i class="fas fa-box-open"></i>
+                            <p>Belum ada produk tersedia</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tentang Page -->
+        <div id="tentang" class="page">
+            <div class="card">
+                <div class="card-header">
+                    Tentang Loka
+                </div>
+                <div class="card-content">
+                    <div class="about-logo">
+                        <img src="assets/img/icon.png" alt="Loka Logo">
+                        <h4 style="color: var(--primary-color);">Loka</h4>
+                        <p style="color: var(--text-secondary);">Versi 1.0.0</p>
+                    </div>
+
+                    <p style="margin-bottom: 16px;">Loka adalah aplikasi pengelolaan warung lokal yang dirancang untuk memudahkan operasional warung di Indonesia. Aplikasi ini membantu pemilik warung untuk mengelola transaksi, stok, dan produk dengan mudah.</p>
+
+                    <h5>Fitur Utama</h5>
+                    <div class="about-feature">
+                        <i class="fas fa-cash-register"></i>
+                        <div class="about-feature-content">
+                            <div class="about-feature-title">Transaksi</div>
+                            <div class="about-feature-desc">Catat transaksi penjualan dengan mudah menggunakan scan barcode</div>
+                        </div>
+                    </div>
+                    <div class="about-feature">
+                        <i class="fas fa-history"></i>
+                        <div class="about-feature-content">
+                            <div class="about-feature-title">Riwayat</div>
+                            <div class="about-feature-desc">Lihat riwayat transaksi dan laporan pendapatan</div>
+                        </div>
+                    </div>
+                    <div class="about-feature">
+                        <i class="fas fa-boxes"></i>
+                        <div class="about-feature-content">
+                            <div class="about-feature-title">Stok</div>
+                            <div class="about-feature-desc">Pantau stok produk dengan mudah</div>
+                        </div>
+                    </div>
+                    <div class="about-feature">
+                        <i class="fas fa-box"></i>
+                        <div class="about-feature-content">
+                            <div class="about-feature-title">Produk</div>
+                            <div class="about-feature-desc">Kelola data produk termasuk harga jual dan modal</div>
+                        </div>
+                    </div>
+                    <div class="about-feature">
+                        <i class="fas fa-print"></i>
+                        <div class="about-feature-content">
+                            <div class="about-feature-title">Cetak Struk</div>
+                            <div class="about-feature-desc">Cetak struk transaksi untuk pelanggan</div>
+                        </div>
+                    </div>
+
+                    <h5 class="mb-2 mt-2">Pengaturan Warung</h5>
+                    <div class="input-field">
+                        <label for="store-name">Nama Warung</label>
+                        <input type="text" id="store-name" placeholder="Masukkan nama warung">
+                    </div>
+                    <div class="input-field">
+                        <label for="store-address">Alamat Warung</label>
+                        <input type="text" id="store-address" placeholder="Masukkan alamat warung">
+                    </div>
+                    <button id="save-store-info" class="btn ripple">
+                        <i class="fas fa-save mr-1"></i> Simpan Informasi Warung
+                    </button>
+
+                    <p style="text-align: center; color: var(--text-secondary); margin-top: 24px;">
+                        Dibuat dengan <i class="fas fa-heart" style="color: var(--primary-color);"></i> untuk warung lokal Indonesia
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <audio id="beepSound" src="assets/media/beep.mp3" preload="auto"></audio>
+    <!-- Footer Navigation -->
+    <footer class="footer">
+        <div class="nav-item active ripple" data-page="transaksi">
+            <i class="fas fa-cash-register"></i>
+            <span>Transaksi</span>
+        </div>
+        <div class="nav-item ripple" data-page="riwayat">
+            <i class="fas fa-history"></i>
+            <span>Riwayat</span>
+        </div>
+        <div class="nav-item ripple" data-page="stok">
+            <i class="fas fa-boxes"></i>
+            <span>Stok</span>
+        </div>
+        <div class="nav-item ripple" data-page="produk">
+            <i class="fas fa-box"></i>
+            <span>Produk</span>
+        </div>
+        <div class="nav-item ripple" data-page="tentang">
+            <i class="fas fa-info-circle"></i>
+            <span>Tentang</span>
+        </div>
+    </footer>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Edit Product Modal -->
+    <div id="edit-product-modal" class="modal">
+        <div class="modal-content">
+            <h5>Edit Produk</h5>
+            <div class="input-field">
+                <label for="edit-product-barcode">Kode Barcode</label>
+                <input type="text" id="edit-product-barcode" readonly>
+            </div>
+            <div class="input-field">
+                <label for="edit-product-name">Nama Produk</label>
+                <input type="text" id="edit-product-name">
+            </div>
+            <div class="input-field">
+                <label for="edit-product-price">Harga Jual (Rp)</label>
+                <input type="number" id="edit-product-price">
+            </div>
+            <div class="input-field">
+                <label for="edit-product-cost">Harga Modal (Rp)</label>
+                <input type="number" id="edit-product-cost">
+            </div>
+            <div class="input-field">
+                <label for="edit-product-stock">Stok</label>
+                <input type="number" id="edit-product-stock">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn modal-close ripple" style="background-color: #9e9e9e;">Batal</button>
+            <button id="update-product" class="btn btn-success ripple">Simpan</button>
+        </div>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div id="receipt-modal" class="modal">
+        <div class="modal-content">
+            <h5>Struk Belanja</h5>
+            <div id="receipt-container" class="receipt">
+                <div class="receipt-header">
+                    <h4 id="receipt-store-name">LOKA WARUNG</h4>
+                    <p id="receipt-store-address">Jl. Contoh No. 123, Kota</p>
+                    <p id="receipt-date"></p>
+                    <p id="receipt-id"></p>
+                </div>
+                <div class="receipt-items" id="receipt-items">
+                    <!-- Items will be added here -->
+                </div>
+                <div class="receipt-total">
+                    <span>TOTAL</span>
+                    <span id="receipt-total-amount"></span>
+                </div>
+                <div class="receipt-footer">
+                    <p>Terima kasih atas kunjungan Anda</p>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn modal-close ripple" style="background-color: #9e9e9e;">Tutup</button>
+            <button id="print-receipt" class="btn btn-success ripple">
+                <i class="fas fa-print mr-1"></i> Cetak
+            </button>
+        </div>
+    </div>
+
     <script src="assets/js/app.js"></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
-                .then(registration => {
-                    console.log('Service Worker Registered');
-                    registration.update();
-                })
-                .catch(error => console.error('Service Worker Error:', error));
-        }
-    </script>
 </body>
 </html>
