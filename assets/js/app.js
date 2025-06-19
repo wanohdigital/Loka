@@ -849,23 +849,24 @@ function initApp() {
             renderProductList(searchTerm);
         }
     });
-    
-    // Add sample data if no products exist
-    if (products.length === 0) {
-        const sampleProducts = [
-            { barcode: '8992775311001', name: 'Indomie Goreng', price: 3500, cost: 2800, stock: 50 },
-            { barcode: '8992775311002', name: 'Indomie Soto', price: 3000, cost: 2500, stock: 45 },
-            { barcode: '8992753012487', name: 'Aqua 600ml', price: 4000, cost: 3200, stock: 30 },
-            { barcode: '8992761136018', name: 'Teh Pucuk 350ml', price: 5000, cost: 4200, stock: 25 },
-            { barcode: '8992696524187', name: 'Oreo Original', price: 7500, cost: 6000, stock: 20 }
-        ];
-        
-        products = sampleProducts;
-        updateStorage();
-        renderProductList();
-        renderStockList();
-    }
 }
 
 // Start the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', initApp);
+
+// PWA Install Prompt
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    // Tampilkan modal Bootstrap
+    $('#installModal').modal('show');
+});
+
+function installPWA() {
+    $('#installModal').modal('hide');
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => deferredPrompt = null);
+}

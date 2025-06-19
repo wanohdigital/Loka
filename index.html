@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#e82b38">
-    <title>Loka - Aplikasi Warung</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="shortcut icon" type="image/x-icon" href="https://wanoh.digital/assets/img/favicon.ico?v=2">
+    <title>Loka - Digitalisasi Warung Mudah!</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -49,7 +51,6 @@
                         <input type="text" id="barcode" placeholder="Scan atau masukkan kode barcode">
                     </div>
                     <div class="input-field">
-                        <label for="quantity">Jumlah</label>
                         <div class="quantity-selector">
                             <button id="decrease-qty" class="ripple">-</button>
                             <input type="number" id="quantity" value="1" min="1">
@@ -222,6 +223,24 @@
         <div id="tentang" class="page">
             <div class="card">
                 <div class="card-header">
+                    Pengaturan
+                </div>
+                <div class="card-content">
+                    <div class="input-field">
+                        <label for="store-name">Nama Warung</label>
+                        <input type="text" id="store-name" placeholder="Masukkan nama warung">
+                    </div>
+                    <div class="input-field">
+                        <label for="store-address">Alamat Warung</label>
+                        <input type="text" id="store-address" placeholder="Masukkan alamat warung">
+                    </div>
+                    <button id="save-store-info" class="btn ripple">
+                        <i class="fas fa-save mr-1"></i> Simpan Informasi Warung
+                    </button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
                     Tentang Loka
                 </div>
                 <div class="card-content">
@@ -269,19 +288,6 @@
                             <div class="about-feature-desc">Cetak struk transaksi untuk pelanggan</div>
                         </div>
                     </div>
-
-                    <h5 class="mb-2 mt-2">Pengaturan Warung</h5>
-                    <div class="input-field">
-                        <label for="store-name">Nama Warung</label>
-                        <input type="text" id="store-name" placeholder="Masukkan nama warung">
-                    </div>
-                    <div class="input-field">
-                        <label for="store-address">Alamat Warung</label>
-                        <input type="text" id="store-address" placeholder="Masukkan alamat warung">
-                    </div>
-                    <button id="save-store-info" class="btn ripple">
-                        <i class="fas fa-save mr-1"></i> Simpan Informasi Warung
-                    </button>
 
                     <p style="text-align: center; color: var(--text-secondary); margin-top: 24px;">
                         Dibuat dengan <i class="fas fa-heart" style="color: var(--primary-color);"></i> untuk warung lokal Indonesia
@@ -374,6 +380,25 @@
             <button id="print-receipt" class="btn btn-success ripple">
                 <i class="fas fa-print mr-1"></i> Cetak
             </button>
+        </div>
+    </div>
+
+    <!-- Modal Install -->
+    <div class="modal fade" id="installModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Install Loka</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img src="assets/img/icon.png" class="mb-3" style="height: 80px;">
+                    <p>Install Loka untuk pengalaman terbaik!</p>
+                    <button class="btn btn-danger w-100" onclick="installPWA()">
+                        <i class="fas fa-download"></i> Install Sekarang
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
