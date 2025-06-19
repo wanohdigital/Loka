@@ -849,6 +849,8 @@ function initApp() {
             renderProductList(searchTerm);
         }
     });
+
+    setupInstallModal();
 }
 
 // Start the app when DOM is loaded
@@ -857,16 +859,40 @@ document.addEventListener('DOMContentLoaded', initApp);
 // PWA Install Prompt
 let deferredPrompt;
 
+// Add this to your existing JavaScript, outside of any function
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
     
-    // Tampilkan modal Bootstrap
-    $('#installModal').modal('show');
+    // Show the install modal
+    const installModal = document.getElementById('install-modal');
+    const modalInstance = M.Modal.init(installModal, {
+        dismissible: true,
+        opacity: 0.5,
+        inDuration: 300,
+        outDuration: 200
+    });
+    modalInstance.open();
 });
 
-function installPWA() {
-    $('#installModal').modal('hide');
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(() => deferredPrompt = null);
+// Add this to your initApp() function
+function setupInstallModal() {
+
+    // Add click handler for install button
+    document.getElementById('install-pwa-btn').addEventListener('click', () => {
+        if (deferredPrompt) {
+            // Close the modal first
+            const installModal = document.getElementById('install-modal');
+            const modalInstance = M.Modal.getInstance(installModal);
+            if (modalInstance) {
+                modalInstance.close();
+            }
+            
+            // Then show the install prompt
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then(() => {
+                deferredPrompt = null;
+            });
+        }
+    });
 }

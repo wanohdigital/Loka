@@ -382,21 +382,34 @@
             </button>
         </div>
     </div>
-
-    <!-- Modal Install -->
-    <div class="modal fade" id="installModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title">Install Loka</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body text-center">
-                    <img src="assets/img/icon.png" class="mb-3" style="height: 80px;">
-                    <p>Install Loka untuk pengalaman terbaik!</p>
-                    <button class="btn btn-danger w-100" onclick="installPWA()">
-                        <i class="fas fa-download"></i> Install Sekarang
+    
+    <!-- Install Modal -->
+    
+    <!-- Install Modal -->
+    <div id="install-modal" class="modal">
+        <div class="modal-content">
+            <div style="background-color: var(--primary-color); color: white; padding: 16px; margin: -16px -16px 16px -16px; position: relative;">
+                <h6 style="margin: 0;">Install Loka</h6>
+                <button class="modal-close btn-flat" style="position: absolute; right: 20px; top: 15px; padding: 0; color: white;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div style="text-align: center;">
+                <img src="assets/img/icon.png" style="height: 80px; margin-bottom: 16px;">
+                <p id="install-message">Install Loka untuk pengalaman terbaik!</p>
+                <div id="chrome-install-container">
+                    <button id="install-pwa-btn" class="btn ripple" style="width: 100%;">
+                        <i class="fas fa-download mr-1"></i> Install Sekarang
                     </button>
+                </div>
+                <div id="ios-install-container" style="display: none; text-align: left;">
+                    <p>Untuk menginstall di iOS:</p>
+                    <ol>
+                        <li>Tap ikon <i class="fas fa-share-square"></i> di browser</li>
+                        <li>Scroll dan pilih "Add to Home Screen"</li>
+                        <li>Tap "Add" di pojok kanan atas</li>
+                    </ol>
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTYwIDIwSDQwQzI4Ljk1IDIwIDIwIDI4Ljk1IDIwIDQwVjYwQzIwIDcxLjA1IDI4Ljk1IDgwIDQwIDgwSDYwQzcxLjA1IDgwIDgwIDcxLjA1IDgwIDYwVjQwQzgwIDI4Ljk1IDcxLjA1IDIwIDYwIDIwWk03NSA2MEg2MFY3NUg0MFY2MEgyNVY0MEg0MFYyNUg2MFY0MEg3NVY2MFoiIGZpbGw9IiM3NTc1NzUiLz48L3N2Zz4=" style="width: 40px; margin: 10px auto; display: block;">
                 </div>
             </div>
         </div>

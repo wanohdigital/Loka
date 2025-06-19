@@ -600,3 +600,7 @@ body {
     opacity: .3;
     transition: 0s;
 }
+
+#install-pwa-btn {
+    margin-top: 20px;
+}
