@@ -1,7 +1,7 @@
 # 🛒 Loka
 **Solusi digitalisasi warung UMKM tanpa ribet** untuk mengelola produk, stok, dan transaksi di warung secara modern.
 
-Untuk melihat demo, bisa [klik di sini](https://loka.wanoh.digital/)
+Untuk melihat live version, bisa [klik di sini](https://loka.wanoh.digital/)
 
 ---
 
@@ -51,7 +51,7 @@ Untuk melihat demo, bisa [klik di sini](https://loka.wanoh.digital/)
 ## 🔧 Teknologi Stack
 | Komponen | Teknologi |
 |----------|-----------|
-| Frontend | HTML5, CSS3, Bootstrap 5 |
+| Frontend | HTML5, CSS3, Material UI |
 | Interaksi | jQuery 3.6 |
 | QR Code | Quagga |
 | PWA | Service Worker + Manifest |
@@ -66,6 +66,4 @@ Pull request diterima untuk:
 - Optimasi PWA
 
 ## ©️ Lisensi
-MIT License - Bebas digunakan untuk keperluan UMKM
-
-Credit untuk [Qwen AI](https://chat.qwenlm.ai/)
+MIT License - Bebas digunakan untuk keperluan UMKM di Indonesia
